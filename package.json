@@ -1,0 +1,14 @@
+{
+  "name": "admingen-framework",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "example-app"
+  ],
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

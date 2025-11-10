@@ -1,0 +1,14 @@
+{
+  "name": "admingen",
+  "module": "src/index.ts",
+  "type": "module",
+  "dependencies": {
+    "elysia": "latest",
+    "@elysiajs/static": "latest",
+    "@admingen/types": "workspace:*"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "typescript": "^5.3.0"
+  }
+}

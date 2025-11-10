@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+      "target": "esnext",
+      "module": "esnext",
+      "moduleResolution": "bundler",
+      "esModuleInterop": true,
+      "strict": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "types": ["bun-types"],
+      "composite": true,
+      "declaration": true,
+      "declarationMap": true,
+      "baseUrl": ".",
+      "paths": {
+        "admingen": ["packages/admingen/src"],
+        "@admingen/adapter-drizzle": ["packages/adapter-drizzle/src"],
+        "@admingen/types": ["packages/types/src"]
+      }
+    }
+  }
