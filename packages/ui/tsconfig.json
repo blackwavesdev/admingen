@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "jsx": "react-jsx",
+    "allowImportingTsExtensions": true,
+    "types": ["vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
+    "noEmit": true // <-- ADD THIS LINE
+  },
+  "include": ["src/**/*",
+  "src/routeTree.gen.ts"
+],
+  "exclude": ["dist", "node_modules"],
+  "references": [
+    { "path": "../types" }
+  ]
+}
