@@ -1,16 +1,15 @@
-name: Publish Packages to GitHub Registry
+name: Publish Packages to NPM
 
 on:
   push:
     tags:
-      - 'v*' # Run this workflow when you create a new tag like "v0.0.1"
+      - 'v*' # Run this workflow when you create a new tag
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write # This is the key permission
     
     steps:
       - name: Checkout repository
@@ -25,16 +24,25 @@ jobs:
       - name: Build all packages
         run: bun run build
 
-      - name: Setup .npmrc for GitHub
-        run: |
-          echo "@blackwavesdev:registry=https://npm.pkg.github.com/" > .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+      # --- THIS IS THE NEW PART ---
+      - name: Setup Node.js for publishing
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Use a standard Node.js version for npm
+          registry-url: 'https://registry.npmjs.org/' # Point to the public npm registry
+          scope: '@blackwaves' # Set your scope
 
       - name: Publish @blackwaves/admingen-types
-        run: cd packages/types && npm publish --tag beta
+        run: cd packages/types && npm publish --access public --tag beta
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish @blackwaves/admingen-adapter-drizzle
-        run: cd packages/adapter-drizzle && npm publish --tag beta
-        
+        run: cd packages/adapter-drizzle && npm publish --access public --tag beta
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          
       - name: Publish @blackwaves/admingen
-        run: cd packages/admingen && npm publish --tag beta
+        run: cd packages/admingen && npm publish --access public --tag beta
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
