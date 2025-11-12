@@ -10,12 +10,6 @@
       "types": ["bun-types"],
       "composite": true,
       "declaration": true,
-      "declarationMap": true,
-      "baseUrl": ".",
-      "paths": {
-        "admingen": ["packages/admingen/src"],
-        "@admingen/adapter-drizzle": ["packages/adapter-drizzle/src"],
-        "@admingen/types": ["packages/types/src"]
-      }
+      "declarationMap": true,      
     }
   }

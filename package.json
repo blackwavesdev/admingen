@@ -5,6 +5,9 @@
     "packages/*",
     "example-app"
   ],
+  "scripts": {
+"build": "cd packages/admingen && bun run build"
+},
   "devDependencies": {
     "@types/bun": "latest"
   },

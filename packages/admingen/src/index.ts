@@ -1,72 +1,82 @@
-// packages/admingen/src/index.ts
 import { Elysia } from 'elysia';
 import { staticPlugin } from '@elysiajs/static';
 import type { AdapterResult } from '@admingen/types';
+import { join } from 'path';
 
-// This is the correct, decoupled options interface
-// This is the OLD interface
-// This is the NEW, more flexible interface
 export interface AdminGenOptions {
   adapterResult: AdapterResult;
   adminPath?: string;
-  uiAssetsPath?: string; // <-- Make this optional (string | undefined)
   beforeHandle?: (context: any) => any;
 }
 
 export const AdminGen = ({ 
     adapterResult, 
     adminPath = '/admin', 
-    uiAssetsPath,
     beforeHandle
 }: AdminGenOptions) => {
 
+    const uiAssetsPath = join(import.meta.dirname, '..', '..', 'ui-assets');
     const app = new Elysia({ prefix: adminPath });
 
-    // 1. REGISTER THE AUTH HOOK (if provided)
-    // This hook will now *only* run on routes prefixed with '/admin'
     if (beforeHandle) {
         app.onBeforeHandle((ctx) => beforeHandle(ctx));
     }
 
-    // 2. REGISTER THE GENERATED API ROUTES
+    // --- NEW STATIC SERVING LOGIC ---
+
+    // 1. Serve the API FIRST
+    // This ensures /admin/api/... is always matched.
     app.group('/api', (api) => {
         const { schemaJson, handlers } = adapterResult;
-        
-        // 2a. Schema Route: Serves the JSON contract to the frontend
         api.get('/_schema', () => schemaJson);
 
-        // 2b. Data Routes: Dynamically register CRUD API endpoints
         for (const resource of schemaJson.resources) {
             const resourceName = resource.name;
-            
-            // LIST/READ: GET /admin/api/posts
             api.get(`/${resourceName}`, handlers.findMany(resourceName));
-            
-            // READ ONE: GET /admin/api/posts/:id
             api.get(`/${resourceName}/:id`, handlers.findOne(resourceName));
-            
-            // CREATE: POST /admin/api/posts
             api.post(`/${resourceName}`, handlers.create(resourceName));
-
-            // UPDATE: PATCH /admin/api/posts/:id
             api.patch(`/${resourceName}/:id`, handlers.update(resourceName));
-            
-            // DELETE: DELETE /admin/api/posts/:id
             api.delete(`/${resourceName}/:id`, handlers.delete(resourceName));
         }
-
         return api;
     });
 
-    // 3. SERVE THE UI FRONTEND (The static files)
-    if (uiAssetsPath) {
-      app.use(
-          staticPlugin({
-              assets: uiAssetsPath,
-              prefix: '/',
-              indexHTML: true,
-          })
-      );
-  }
+    // 2. Serve the 'assets' folder specifically
+    // A request for /admin/assets/index.js will look in /ui-assets/assets/index.js
+    app.use(
+        staticPlugin({
+            assets: join(uiAssetsPath, 'assets'),
+            prefix: '/assets',
+            alwaysStatic: true, // Be more aggressive
+        })
+    );
+    
+    // 3. Serve other static files (favicon, manifest, etc.)
+    app.use(
+        staticPlugin({
+            assets: uiAssetsPath,
+            prefix: '/',
+            alwaysStatic: true,
+            // Ignore assets folder (already handled) and index.html (fallback)
+            ignorePatterns: [
+                join(uiAssetsPath, 'assets', '/*'),
+                join(uiAssetsPath, 'index.html')
+            ]
+        })
+    );
+
+    // 4. Serve the index.html as a fallback for all other routes
+    // This MUST come last.
+    app.get('/*', async ({ set }) => {
+         const htmlFile = Bun.file(join(uiAssetsPath, 'index.html'));
+         if (await htmlFile.exists()) {
+             set.headers['Content-Type'] = 'text/html; charset=utf-8';
+             return htmlFile;
+         }
+         return new Response('Admin UI not found', { status: 404 });
+    });
+    
+    // --- END NEW LOGIC ---
+
     return app;
 }

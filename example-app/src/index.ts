@@ -5,8 +5,8 @@ import * as schema from './schema'; // The user's schema
 import { cors } from '@elysiajs/cors';
 
 // 1. Import our framework
-import { createDrizzleAdapter } from '@admingen/adapter-drizzle';
-import { AdminGen } from 'admingen';
+import { createDrizzleAdapter } from '@blackwaves/admingen-adapter-drizzle'
+import { AdminGen } from '@blackwaves/admingen'
 
 // 2. Standard Drizzle setup
 const sqlite = new Database('sqlite.db', { create: true });

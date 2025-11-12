@@ -3,7 +3,8 @@
   "compilerOptions": {
     "outDir": "dist"
   },
-  "include": ["src"],
+"include": ["src/**/*"],
+  "exclude": ["dist", "node_modules"],
   "references": [
     { "path": "../packages/types" },
     { "path": "../packages/adapter-drizzle" },

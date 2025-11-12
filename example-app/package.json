@@ -3,14 +3,15 @@
   "scripts": {
     "dev": "bun run --watch src/index.ts",
     "db:generate": "bunx drizzle-kit generate",
-    "db:migrate": "bun run src/migrate.ts"
+    "db:migrate": "bun run src/migrate.ts",
+    "db:seed": "bun run src/seed.ts"
   },
   "dependencies": {
     "elysia": "latest",
     "drizzle-orm": "latest",
     "@elysiajs/cors": "latest",
-    "admingen": "workspace:*",
-    "@admingen/adapter-drizzle": "workspace:*"
+    "@blackwaves/admingen": "workspace:*",
+  "@blackwaves/admingen-adapter-drizzle": "workspace:*"
   },
   "devDependencies": {
     "bun-types": "latest",
