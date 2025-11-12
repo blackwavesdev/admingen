@@ -27,9 +27,10 @@
   },
   "files": [ "dist", "ui-assets" ],
 "scripts": {
-  "build": "bun run build:ui && bun run build:ts",
+  "build": "bun run build:deps && bun run build:ui && bun run build:ts",
+  "build:deps": "cd ../types && bun run build && cd ../adapter-drizzle && bun run build && cd ../admingen",
   "build:ts": "rm -rf dist && tsc -b",
-"build:ui": "cd ../ui && bun run clean && bun run build && cd ../admingen && rm -rf ./ui-assets && mv ../ui/dist ./ui-assets",
+  "build:ui": "cd ../ui && bun run clean && bun run build && cd ../admingen && rm -rf ./ui-assets && mv ../ui/dist ./ui-assets",
   "dev": "tsc -b --watch"
 },
   "dependencies": {
