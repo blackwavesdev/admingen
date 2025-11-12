@@ -26,10 +26,10 @@
   "files": [
     "dist"
   ],
-  "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.json",
-    "dev": "tsc -p tsconfig.json --watch"
-  },
+"scripts": {
+  "build": "rm -rf dist && tsc -b",
+  "dev": "tsc -b --watch"
+},
   "devDependencies": {
     "typescript": "^5.3.0",
     "bun-types": "latest"
