@@ -37,6 +37,7 @@
   "@elysiajs/static": "latest",
   "@blackwaves/admingen-types": "workspace:*"
 },
+"readme": "../../README.md",
   "peerDependencies": {
     "elysia": "*"
   },

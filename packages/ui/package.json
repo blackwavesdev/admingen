@@ -8,6 +8,7 @@
     "clean": "rm -rf dist node_modules/.vite",
     "preview": "vite preview"
   },
+  "readme": "../../README.md",
   "dependencies": {
     "@blackwaves/admingen-types": "workspace:*",
     "@faker-js/faker": "^10.0.0",

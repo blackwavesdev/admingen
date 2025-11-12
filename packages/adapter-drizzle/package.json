@@ -32,6 +32,7 @@
  "dependencies": {
   "@blackwaves/admingen-types": "workspace:*"
 },
+"readme": "../../README.md",
   "peerDependencies": {
     "elysia": "*",
     "drizzle-orm": "*"

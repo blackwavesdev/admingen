@@ -49,13 +49,13 @@ Get your admin panel running in 3 minutes.
 
 ### 1. Installation
 
-In your existing Elysia + Drizzle project, install the required packages:
+In your existing Elysia + Drizzle project, install the core framework, the Drizzle adapter, and all required peer dependencies.
 
 ```bash
-# 1. Install the AdminGen packages from npm
+# Install the core framework and the Drizzle adapter
 bun add @blackwaves/admingen@beta @blackwaves/admingen-adapter-drizzle@beta
 
-# 2. Install required peer dependencies
+# Install required peer dependencies
 bun add elysia drizzle-orm @sinclair/typebox
 
 ### 2. Usage
