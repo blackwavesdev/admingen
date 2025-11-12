@@ -1,6 +1,6 @@
 {
   "name": "@blackwaves/admingen-adapter-drizzle",
-  "version": "0.0.1-beta.2",
+  "version": "0.0.1-beta.23",
   "private": false,
   "description": "Drizzle adapter for AdminGen",
   "keywords": [
@@ -30,7 +30,7 @@
     "dev": "tsc -p tsconfig.json --watch"
   },
   "dependencies": {
-    "@blackwaves/admingen-types": "0.0.1-beta.0"
+    "@blackwaves/admingen-types": "0.0.1-beta.23"
   },
   "peerDependencies": {
     "elysia": "*",

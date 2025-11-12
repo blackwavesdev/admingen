@@ -1,6 +1,6 @@
 {
   "name": "@blackwaves/admingen",
-  "version": "0.0.1-beta.22",
+  "version": "0.0.1-beta.23",
   "private": false,
   "description": "Headless Admin Panel Framework for Elysia and Drizzle",
   "keywords": [
@@ -34,7 +34,7 @@
 },
   "dependencies": {
     "@elysiajs/static": "latest",
-    "@blackwaves/admingen-types": "0.0.1-beta.0"
+    "@blackwaves/admingen-types": "0.0.1-beta.23"
   },
   "peerDependencies": {
     "elysia": "*"
