@@ -16,7 +16,7 @@ import {
   type SortingFn
 } from '@tanstack/react-table'
 import { compareItems, rankItem, type RankingInfo } from '@tanstack/match-sorter-utils'
-import type { AdminField, AdminSchema } from '@admingen/types'
+import type { AdminField, AdminSchema } from '@blackwaves/admingen-types';
 
 // This "augments" the module, telling TypeScript about our 'fuzzy' filter
 declare module '@tanstack/react-table' {

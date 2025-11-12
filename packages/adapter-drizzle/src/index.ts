@@ -8,7 +8,7 @@ import {
   type AdapterResult,
   type AdminField,
   type AdminResource
-} from '@admingen/types';
+} from '@blackwaves/admingen-types';
 
 type DrizzleDB = {
   query: Record<string, any>;

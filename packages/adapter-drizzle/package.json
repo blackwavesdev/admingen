@@ -29,9 +29,9 @@
     "build": "rm -rf dist && tsc -b",
     "dev": "tsc -p tsconfig.json --watch"
   },
-  "dependencies": {
-    "@blackwaves/admingen-types": "0.0.1-beta.23"
-  },
+ "dependencies": {
+  "@blackwaves/admingen-types": "workspace:*"
+},
   "peerDependencies": {
     "elysia": "*",
     "drizzle-orm": "*"

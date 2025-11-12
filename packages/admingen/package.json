@@ -33,10 +33,10 @@
   "build:ui": "cd ../ui && bun run clean && bun run build && cd ../admingen && rm -rf ./ui-assets && mv ../ui/dist ./ui-assets",
   "dev": "tsc -b --watch"
 },
-  "dependencies": {
-    "@elysiajs/static": "latest",
-    "@blackwaves/admingen-types": "0.0.1-beta.23"
-  },
+"dependencies": {
+  "@elysiajs/static": "latest",
+  "@blackwaves/admingen-types": "workspace:*"
+},
   "peerDependencies": {
     "elysia": "*"
   },

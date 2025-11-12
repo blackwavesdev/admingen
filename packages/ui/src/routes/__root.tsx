@@ -1,6 +1,6 @@
 import { createRootRoute, Link, Outlet } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
-import type { AdminSchema } from '@admingen/types'; // Import our contract
+import type { AdminSchema } from '@blackwaves/admingen-types'; // Import our contract
 
 // This is the function that fetches our schema
 const fetchAdminSchema = async (): Promise<AdminSchema> => {

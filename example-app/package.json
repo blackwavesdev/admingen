@@ -10,7 +10,7 @@
     "elysia": "latest",
     "drizzle-orm": "latest",
     "@elysiajs/cors": "latest",
-    "@blackwaves/admingen": "workspace:*",
+"@blackwaves/admingen": "workspace:*",
   "@blackwaves/admingen-adapter-drizzle": "workspace:*"
   },
   "devDependencies": {

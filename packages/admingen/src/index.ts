@@ -1,6 +1,6 @@
 import { Elysia } from 'elysia';
 import { staticPlugin } from '@elysiajs/static';
-import type { AdapterResult } from '@admingen/types';
+import type { AdapterResult } from '@blackwaves/admingen-types';
 import { join } from 'path';
 
 export interface AdminGenOptions {
