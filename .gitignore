@@ -1,0 +1,22 @@
+# Node
+node_modules
+bun.lock
+*.log
+
+# Build artifacts
+dist
+ui-assets
+*.tsbuildinfo
+
+# Caches
+.vite/
+.turbo/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+sqlite.db
+*.sqlite
+./example-app/drizzle/

@@ -1,0 +1,10 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/types" },
+    { "path": "packages/adapter-drizzle" },
+    { "path": "packages/admingen" },
+    { "path": "packages/ui" },
+    { "path": "example-app" }
+  ]
+}
