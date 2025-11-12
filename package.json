@@ -5,8 +5,8 @@
     "packages/*",
     "example-app"
   ],
-  "scripts": {
-"build": "cd packages/admingen && bun run build"
+"scripts": {
+  "build": "cd packages/types && bun run build && cd ../adapter-drizzle && bun run build && cd ../ui && bun run clean && bun run build && cd ../admingen && bun run build"
 },
   "devDependencies": {
     "@types/bun": "latest"
