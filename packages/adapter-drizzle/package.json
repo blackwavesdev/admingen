@@ -8,6 +8,11 @@
     "drizzle",
     "adapter"
   ],
+  "repository": {
+  "type": "git",
+  "url": "https://github.com/blackwavesdev/admingen.git",
+  "directory": "packages/adapter-drizzle"
+},
   "license": "MIT",
   "type": "module",
   "main": "dist/src/index.js",
