@@ -42,32 +42,20 @@ export const AdminGen = ({
         return api;
     });
 
-    // 2. SERVE THE 'assets' FOLDER
-    // This explicitly serves /admin/assets/*
+    // 2. SERVE THE STATIC ASSETS (JS, CSS, images)
+    // This explicitly serves /admin/assets/*, /admin/favicon.ico, etc.
     // It MUST come before the index.html fallback.
     app.use(
         staticPlugin({
-            assets: join(uiAssetsPath, 'assets'),
-            prefix: '/assets',
-            alwaysStatic: true, // Be more aggressive
-        })
-    );
-    
-    // 3. SERVE OTHER ROOT STATIC FILES (favicon, etc.)
-    app.use(
-        staticPlugin({
             assets: uiAssetsPath,
-            prefix: '/',
+            prefix: '/', // Match the root of the /admin prefix
+            // This is the key: ONLY serve files, never fall back to index.html
+            indexHTML: false, 
             alwaysStatic: true,
-            // Ignore assets folder (already handled) and index.html (our fallback)
-            ignorePatterns: [
-                join(uiAssetsPath, 'assets', '/*'),
-                join(uiAssetsPath, 'index.html')
-            ]
         })
     );
 
-    // 4. SERVE THE index.html FALLBACK FOR SPA.
+    // 3. SERVE THE index.html FALLBACK FOR SPA.
     // This MUST come last.
     // It serves index.html for /admin, /admin/posts, etc.
     app.get('/*', async ({ set }) => {
