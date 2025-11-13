@@ -98,9 +98,28 @@ export function createDrizzleAdapter(options: {
     },
     
     // Stubbed handlers
-    create: (resourceName: string) => async () => ({
-      message: `${resourceName} create handler not implemented.`,
-    }),
+    // --- THIS IS THE NEW CODE ---
+create: (resourceName: string) => async ({ db, body }: Context & { db: any, body: any }) => {
+  const table = tables[resourceName];
+  
+  if (!table) {
+    throw new Error(`Invalid resource name: ${resourceName}`);
+  }
+  
+  try {
+    // Drizzle will automatically throw an error if the 'body'
+    // object has invalid fields or is missing 'notNull' columns.
+    // Elysia will catch this and send a 400-level error.
+    const result = await db.insert(table).values(body).returning();
+    
+    // Return the newly created item
+    return result[0];
+  } catch (e: any) {
+    // Log the database error and re-throw
+    console.error(`AdminGen Create Error: ${e.message}`);
+    throw new Error(`Failed to create item in ${resourceName}: ${e.message}`);
+  }
+},
     update: (resourceName: string) => async () => ({
       message: `${resourceName} update handler not implemented.`,
     }),
