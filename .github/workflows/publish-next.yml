@@ -34,7 +34,7 @@ jobs:
           echo "PACKAGE_VERSION=$(node -p "require('./packages/admingen/package.json').version")" >> $GITHUB_ENV
 
       - name: Replace 'workspace:*' in package.json files
-        # Finds and replaces 'workspace:*' with the real version (e.g., "0.0.1-beta.30")
+        # Finds and replaces 'workspace:*' with the real version (e.g., "0.0.1-beta.31")
         run: |
           sed -i 's/workspace:\*/${{ env.PACKAGE_VERSION }}/g' packages/adapter-drizzle/package.json
           sed -i 's/workspace:\*/${{ env.PACKAGE_VERSION }}/g' packages/admingen/package.json
