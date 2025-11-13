@@ -1,0 +1,26 @@
+name: Build and Test PRs
+
+on:
+  # This action runs on every pull request that targets the 'main' branch
+  pull_request:
+    branches: [ main ]
+  
+  # Also run on manual trigger
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build all packages
+        run: bun run build
