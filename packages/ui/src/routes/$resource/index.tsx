@@ -17,7 +17,8 @@ import {
 } from '@tanstack/react-table'
 import { compareItems, rankItem, type RankingInfo } from '@tanstack/match-sorter-utils'
 import type { AdminField, AdminSchema } from '@blackwaves/admingen-types';
-
+import { Link } from '@tanstack/react-router' // <-- 1. Make sure Link is imported
+import { Button } from '@/components/ui/button'  // <-- 2. Import your Shadcn button
 // This "augments" the module, telling TypeScript about our 'fuzzy' filter
 declare module '@tanstack/react-table' {
   interface FilterFns {
@@ -61,12 +62,12 @@ async function fetchResourceData(resourceName: string) {
 }
 
 // --- Main Page Component ---
-export const Route = createFileRoute('/$resource')({
+export const Route = createFileRoute('/$resource/')({
   component: ResourceListComponent,
 })
 
 function ResourceListComponent() {
-  const { resource: resourceName } = useParams({ from: '/$resource' })
+  const { resource: resourceName } = useParams({ from: '/$resource/' })
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = React.useState('')
 
@@ -133,6 +134,14 @@ function ResourceListComponent() {
 
   return (
     <div className="min-h-screen bg-gray-900 p-6">
+      {/* --- THIS IS THE NEW PART --- */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold capitalize text-white">{resource.label}</h1>
+        <Link to="/$resource/create" params={{ resource: resourceName }}>
+          <Button>Create New {resource.label}</Button>
+        </Link>
+      </div>
+      {/* --- END NEW PART --- */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold capitalize text-white">{resource.label}</h1>
         {/* TODO: Add "Create New" button here */}
