@@ -1,0 +1,52 @@
+name: Publish @next Tag to NPM
+
+on:
+  # This triggers the workflow on every push (e.g., merge) to the main branch
+  push:
+    branches:
+      - 'main'
+  
+  # Also allow it to be run manually
+  workflow_dispatch:
+
+jobs:
+  publish-next:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build all packages
+        run: bun run build
+
+      - name: Setup Node.js for publishing
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org/'
+          scope: '@blackwaves'
+
+      - name: Publish @blackwaves/admingen-types@next
+        # This command publishes the package using the "next" tag
+        run: cd packages/types && npm publish --access public --tag next
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish @blackwaves/admingen-adapter-drizzle@next
+        run: cd packages/adapter-drizzle && npm publish --access public --tag next
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          
+      - name: Publish @blackwaves/admingen@next
+        run: cd packages/admingen && npm publish --access public --tag next
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
