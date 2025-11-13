@@ -22,13 +22,11 @@ export const AdminGen = ({
         app.onBeforeHandle((ctx) => beforeHandle(ctx));
     }
 
-    app.get('', ({ set }) => {
-        set.redirect = `${adminPath}/`;
-    });
-    // --- NEW STATIC SERVING LOGIC ---
+    // --- NEW BUILD ORDER ---
 
-    // 1. Serve the API FIRST
-    // This ensures /admin/api/... is always matched.
+    // 1. Register the API FIRST
+    // This is critical. API routes must be defined *before*
+    // the static fallback.
     app.group('/api', (api) => {
         const { schemaJson, handlers } = adapterResult;
         api.get('/_schema', () => schemaJson);
@@ -44,40 +42,19 @@ export const AdminGen = ({
         return api;
     });
 
-    // 2. Serve the 'assets' folder specifically
-    // A request for /admin/assets/index.js will look in /ui-assets/assets/index.js
-    app.use(
-        staticPlugin({
-            assets: join(uiAssetsPath, 'assets'),
-            prefix: '/assets',
-            alwaysStatic: true, // Be more aggressive
-        })
-    );
-    
-    // 3. Serve other static files (favicon, manifest, etc.)
+    // 2. REGISTER THE STATIC UI SECOND.
+    // This one plugin will now do everything:
+    // - Serve static files from /ui-assets (e.g., /admin/assets/index.js)
+    // - Serve the index.html as a fallback for all SPA routes (like /admin or /admin/posts)
     app.use(
         staticPlugin({
             assets: uiAssetsPath,
-            prefix: '/',
-            alwaysStatic: true,
-            // Ignore assets folder (already handled) and index.html (fallback)
-            ignorePatterns: [
-                join(uiAssetsPath, 'assets', '/*'),
-                join(uiAssetsPath, 'index.html')
-            ]
+            prefix: '/', // Serve from the root of the /admin prefix
+            
+            // This is the magic "SPA mode" setting
+            indexHTML: true, 
         })
     );
-
-    // 4. Serve the index.html as a fallback for all other routes
-    // This MUST come last.
-    app.get('/*', async ({ set }) => {
-         const htmlFile = Bun.file(join(uiAssetsPath, 'index.html'));
-         if (await htmlFile.exists()) {
-             set.headers['Content-Type'] = 'text/html; charset=utf-8';
-             return htmlFile;
-         }
-         return new Response('Admin UI not found', { status: 404 });
-    });
     
     // --- END NEW LOGIC ---
 
