@@ -22,6 +22,9 @@ export const AdminGen = ({
         app.onBeforeHandle((ctx) => beforeHandle(ctx));
     }
 
+    app.get('', ({ set }) => {
+        set.redirect = `${adminPath}/`;
+    });
     // --- NEW STATIC SERVING LOGIC ---
 
     // 1. Serve the API FIRST
