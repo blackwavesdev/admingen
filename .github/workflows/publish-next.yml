@@ -1,12 +1,9 @@
 name: Publish @next Tag to NPM
 
 on:
-  # This triggers the workflow on every push (e.g., merge) to the main branch
   push:
     branches:
       - 'main'
-  
-  # Also allow it to be run manually
   workflow_dispatch:
 
 jobs:
@@ -28,6 +25,24 @@ jobs:
       - name: Build all packages
         run: bun run build
 
+      # --- NEW FIX STARTS HERE ---
+
+      - name: Get package version
+        # Reads the version from admingen's package.json and saves it to an env variable
+        id: get_version
+        run: |
+          echo "PACKAGE_VERSION=$(node -p "require('./packages/admingen/package.json').version")" >> $GITHUB_ENV
+
+      - name: Replace 'workspace:*' in package.json files
+        # Finds and replaces 'workspace:*' with the real version (e.g., "0.0.1-beta.28")
+        run: |
+          sed -i 's/workspace:\*/${{ env.PACKAGE_VERSION }}/g' packages/adapter-drizzle/package.json
+          sed -i 's/workspace:\*/${{ env.PACKAGE_VERSION }}/g' packages/admingen/package.json
+          sed -i 's/workspace:\*/${{ env.PACKAGE_VERSION }}/g' packages/ui/package.json
+          echo "Replaced workspace:* with ${{ env.PACKAGE_VERSION }}"
+
+      # --- NEW FIX ENDS HERE ---
+
       - name: Setup Node.js for publishing
         uses: actions/setup-node@v4
         with:
@@ -36,7 +51,6 @@ jobs:
           scope: '@blackwaves'
 
       - name: Publish @blackwaves/admingen-types@next
-        # This command publishes the package using the "next" tag
         run: cd packages/types && npm publish --access public --tag next
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
