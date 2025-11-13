@@ -7,7 +7,7 @@
 
 An instant, "headless" admin panel for modern JavaScript backends, built on **ElysiaJS** and **Drizzle ORM**.
 
-This framework introspects your Drizzle schema, auto-generates a secure API, and provides a dynamic, pre-built React UI to manage your data.
+Thiss framework introspects your Drizzle schema, auto-generates a secure API, and provides a dynamic, pre-built React UI to manage your data.
 
 
 > **Note:** A 15-second GIF showing the final, working admin panel is the perfect demo to add here.
