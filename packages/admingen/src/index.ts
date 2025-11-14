@@ -22,11 +22,9 @@ export const AdminGen = ({
         app.onBeforeHandle((ctx) => beforeHandle(ctx));
     }
 
-    // --- CORRECTED ROUTING ORDER ---
+    // --- ROUTING ORDER ---
 
-    // 1. REGISTER THE API FIRST
-    // This is critical. API routes must be defined *before*
-    // any static file handlers.
+    // 1. API ROUTES (must come first)
     app.group('/api', (api) => {
         const { schemaJson, handlers } = adapterResult;
         api.get('/_schema', () => schemaJson);
@@ -42,32 +40,39 @@ export const AdminGen = ({
         return api;
     });
 
-    // 2. SERVE THE STATIC ASSETS (JS, CSS, images)
-    // This explicitly serves /admin/assets/*, /admin/favicon.ico, etc.
-    // It MUST come before the index.html fallback.
+    // 2. STATIC ASSETS
     app.use(
         staticPlugin({
             assets: uiAssetsPath,
-            prefix: '/', // Match the root of the /admin prefix
-            // This is the key: ONLY serve files, never fall back to index.html
+            prefix: '/', // Still serve everything under adminPath/
             indexHTML: false, 
             alwaysStatic: true,
         })
     );
 
-    // 3. SERVE THE index.html FALLBACK FOR SPA.
-    // This MUST come last.
-    // It serves index.html for /admin, /admin/posts, etc.
-    app.get('/*', async ({ set }) => {
-         const htmlFile = Bun.file(join(uiAssetsPath, 'index.html'));
-         if (await htmlFile.exists()) {
-             set.headers['Content-Type'] = 'text/html; charset=utf-8';
-             return htmlFile;
-         }
-         return new Response('Admin UI not found', { status: 404 });
+    // 3. index.html SPA fallback for ALL of:
+    //   - /admin
+    //   - /admin/
+    //   - /admin/posts, etc.
+    // This change is for Elysia: we need BOTH "" and "/*" to fully catch /admin (w/o slash) and anything else.
+    // Serve index.html for both /admin and /admin/
+    app.get('', async ({ set }) => {
+        const htmlFile = Bun.file(join(uiAssetsPath, 'index.html'));
+        if (await htmlFile.exists()) {
+            set.headers['Content-Type'] = 'text/html; charset=utf-8';
+            return htmlFile;
+        }
+        return new Response('Admin UI not found', { status: 404 });
     });
-    
-    // --- END CORRECTED LOGIC ---
+
+    app.get('/*', async ({ set }) => {
+        const htmlFile = Bun.file(join(uiAssetsPath, 'index.html'));
+        if (await htmlFile.exists()) {
+            set.headers['Content-Type'] = 'text/html; charset=utf-8';
+            return htmlFile;
+        }
+        return new Response('Admin UI not found', { status: 404 });
+    });
 
     return app;
 }
