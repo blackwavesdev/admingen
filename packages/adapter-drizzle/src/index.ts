@@ -57,6 +57,12 @@ export function createDrizzleAdapter(options: {
       continue;
     }
     // --- End Fix ---
+    // --- 👇 THIS IS THE FIX 👇 ---
+    // If getTableColumns returns null (e.g., for 'default' export), skip it.
+    if (!columns) {
+      continue;
+    }
+    // --- END FIX ---
 
     const resource: AdminResource = {
       name: tableName,
