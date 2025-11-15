@@ -16,8 +16,8 @@ async function main() {
 
   // 2. Insert new users
   await db.insert(schema.users).values([
-    { email: 'admin@example.com' },
-    { email: 'user@example.com' },
+    { email: 'admin@example.com', name: 'Admin' },
+    { email: 'user@example.com', name: 'User' },
   ]);
   console.log('Inserted 2 users.');
 
