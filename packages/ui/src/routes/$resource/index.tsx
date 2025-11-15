@@ -13,12 +13,16 @@ import {
   type ColumnDef,
   type ColumnFiltersState,
   type FilterFn,
-  type SortingFn
+  type SortingFn,
 } from '@tanstack/react-table'
-import { compareItems, rankItem, type RankingInfo } from '@tanstack/match-sorter-utils'
-import type { AdminField, AdminSchema } from '@blackwaves/admingen-types';
+import {
+  compareItems,
+  rankItem,
+  type RankingInfo,
+} from '@tanstack/match-sorter-utils'
+import type { AdminField, AdminSchema } from '@blackwaves/admingen-types'
 import { Link } from '@tanstack/react-router' // <-- 1. Make sure Link is imported
-import { Button } from '@/components/ui/button'  // <-- 2. Import your Shadcn button
+import { Button } from '@/components/ui/button' // <-- 2. Import your Shadcn button
 // This "augments" the module, telling TypeScript about our 'fuzzy' filter
 declare module '@tanstack/react-table' {
   interface FilterFns {
@@ -42,7 +46,7 @@ const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
   if (rowA.columnFiltersMeta[columnId]) {
     dir = compareItems(
       rowA.columnFiltersMeta[columnId]?.itemRank!,
-      rowB.columnFiltersMeta[columnId]?.itemRank!
+      rowB.columnFiltersMeta[columnId]?.itemRank!,
     )
   }
   return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir
@@ -57,7 +61,8 @@ async function fetchAdminSchema(): Promise<AdminSchema> {
 
 async function fetchResourceData(resourceName: string) {
   const res = await fetch(`/admin/api/${resourceName}`)
-  if (!res.ok) throw new Error(`Failed to fetch resource data for ${resourceName}`)
+  if (!res.ok)
+    throw new Error(`Failed to fetch resource data for ${resourceName}`)
   return res.json()
 }
 
@@ -68,7 +73,9 @@ export const Route = createFileRoute('/$resource/')({
 
 function ResourceListComponent() {
   const { resource: resourceName } = useParams({ from: '/$resource/' })
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  )
   const [globalFilter, setGlobalFilter] = React.useState('')
 
   const { data: schema, isLoading: schemaLoading } = useQuery({
@@ -102,8 +109,8 @@ function ResourceListComponent() {
   // --- INFINITE LOOP FIX ---
   // We must memoize the data and filterFns objects so they aren't
   // recreated on every render, which causes the loop.
-  const data = React.useMemo(() => resourceData ?? [], [resourceData]);
-  const filterFns = React.useMemo(() => ({ fuzzy: fuzzyFilter }), []);
+  const data = React.useMemo(() => resourceData ?? [], [resourceData])
+  const filterFns = React.useMemo(() => ({ fuzzy: fuzzyFilter }), [])
   // --- END FIX ---
 
   const table = useReactTable({
@@ -136,14 +143,18 @@ function ResourceListComponent() {
     <div className="min-h-screen bg-gray-900 p-6">
       {/* --- THIS IS THE NEW PART --- */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold capitalize text-white">{resource.label}</h1>
+        <h1 className="text-3xl font-bold capitalize text-white">
+          {resource.label}
+        </h1>
         <Link to="/$resource/create" params={{ resource: resourceName }}>
           <Button>Create New {resource.label}</Button>
         </Link>
       </div>
       {/* --- END NEW PART --- */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold capitalize text-white">{resource.label}</h1>
+        <h1 className="text-3xl font-bold capitalize text-white">
+          {resource.label}
+        </h1>
         {/* TODO: Add "Create New" button here */}
       </div>
 
@@ -201,23 +212,35 @@ function ResourceListComponent() {
           <tbody className="divide-y divide-gray-700">
             {dataLoading ? (
               <tr>
-                <td colSpan={columns.length} className="h-24 text-center text-gray-400">
+                <td
+                  colSpan={columns.length}
+                  className="h-24 text-center text-gray-400"
+                >
                   Loading data...
                 </td>
               </tr>
             ) : table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="hover:bg-gray-800 transition-colors">
+                <tr
+                  key={row.id}
+                  className="hover:bg-gray-800 transition-colors"
+                >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-4 py-3">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
                     </td>
                   ))}
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={columns.length} className="h-24 text-center text-gray-400">
+                <td
+                  colSpan={columns.length}
+                  className="h-24 text-center text-gray-400"
+                >
                   No results.
                 </td>
               </tr>
@@ -258,7 +281,8 @@ function ResourceListComponent() {
         <span className="flex items-center gap-1">
           <div>Page</div>
           <strong>
-            {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+            {table.getState().pagination.pageIndex + 1} of{' '}
+            {table.getPageCount()}
           </strong>
         </span>
         <span className="flex items-center gap-1">
