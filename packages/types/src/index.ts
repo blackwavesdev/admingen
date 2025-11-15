@@ -1,8 +1,12 @@
 export interface AdminField {
   name: string;
-  type: 'text' | 'textarea' | 'number' | 'date' | 'boolean' | 'select';
+  type: 'text' | 'textarea' | 'number' | 'date' | 'boolean' | 'select' | 'relation';
   isId?: boolean;
-  label?: string; 
+  label?: string;
+  // For relationship fields
+  relationType?: 'oneToOne' | 'oneToMany' | 'manyToOne' | 'manyToMany';
+  relatedResource?: string; // The name of the related resource
+  foreignKey?: string; // The foreign key column name (for manyToOne)
 }
 
 export interface AdminResource {
