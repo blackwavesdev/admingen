@@ -1,6 +1,6 @@
 {
   "name": "@blackwaves/admingen-adapter-drizzle",
-  "version": "0.0.1-beta.35",
+  "version": "0.0.1-beta.36",
   "private": false,
   "description": "Drizzle adapter for AdminGen",
   "keywords": [
