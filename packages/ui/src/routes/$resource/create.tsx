@@ -51,21 +51,24 @@ function RelationshipField({
   })
 
   return (
-    <div className="flex flex-col gap-2">
-      <Label htmlFor={fieldApi.name} className="capitalize">
+    <div className="flex flex-col gap-2 ">
+      <Label htmlFor={fieldApi.name} className="capitalize ">
         {field.label}
       </Label>
       <Select
         value={fieldApi.state.value ? String(fieldApi.state.value) : ''}
         onValueChange={(value) => {
           // For manyToOne, store the ID
-          const numValue = field.relationType === 'manyToOne' ? Number(value) : value
+          const numValue =
+            field.relationType === 'manyToOne' ? Number(value) : value
           fieldApi.handleChange(numValue)
         }}
         disabled={isLoading}
       >
         <SelectTrigger id={fieldApi.name} className="w-full">
-          <SelectValue placeholder={isLoading ? 'Loading...' : `Select ${field.label}`} />
+          <SelectValue
+            placeholder={isLoading ? 'Loading...' : `Select ${field.label}`}
+          />
         </SelectTrigger>
         <SelectContent>
           {relatedData.map((item: any) => {
@@ -99,26 +102,28 @@ function CreateComponent() {
   // 2. Find the fields for this *specific* resource
   const resource = React.useMemo(
     () => schema?.resources.find((r) => r.name === resourceName),
-    [schema, resourceName]
+    [schema, resourceName],
   )
-  
+
   // Filter out the 'id' field, as that's auto-generated
   const fields = React.useMemo(
     () => resource?.fields.filter((f) => !f.isId) ?? [],
-    [resource]
+    [resource],
   )
 
   // Fetch related resources for relationship fields
   const relationshipFields = React.useMemo(
     () => fields.filter((f) => f.type === 'relation' && f.relatedResource),
-    [fields]
+    [fields],
   )
 
   // Helper to get display value for related items
   const getRelatedItemLabel = (item: any): string => {
     if (!item) return ''
     // Try common fields that might be used for display
-    return item.name || item.email || item.title || item.id || JSON.stringify(item)
+    return (
+      item.name || item.email || item.title || item.id || JSON.stringify(item)
+    )
   }
 
   // 3. Setup the API Mutation
@@ -138,14 +143,16 @@ function CreateComponent() {
     },
     onSuccess: () => {
       // Invalidate the cache for the resource list so it refetches
-      queryClient.invalidateQueries({ queryKey: ['resourceData', resourceName] })
+      queryClient.invalidateQueries({
+        queryKey: ['resourceData', resourceName],
+      })
       // Send the user back to the list page
       navigate({ to: '/$resource', params: { resource: resourceName } })
     },
     onError: (err) => {
       // TODO: Add a real toast notification
       alert(`Error: ${err.message}`)
-    }
+    },
   })
 
   // 4. Setup TanStack Form
@@ -175,11 +182,11 @@ function CreateComponent() {
   if (!resource) return <div>Resource not found in schema.</div>
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 capitalize">
+    <div className="w-full py-20 lg:p-0 flex flex-col    mx-auto text-white">
+      <h1 className="text-3xl font-bold mb-6  capitalize">
         Create New {resource.label}
       </h1>
-      
+
       <form
         onSubmit={(e) => {
           e.preventDefault()
@@ -214,25 +221,52 @@ function CreateComponent() {
                   <Input
                     id={fieldApi.name}
                     name={fieldApi.name}
+                    placeholder={`Enter ${field.label}`} // النص اللي جوا الانبوت
+                    className="
+    bg-[#111827] text-white border border-gray-700 
+    rounded-md px-3 py-2 shadow-sm
+    placeholder-gray-400 placeholder-opacity-70
+    focus:outline-none focus:ring-2 focus:ring-[#00eaff] focus:border-[#00eaff] 
+    transition-colors duration-200     selection:bg-[#00eaff] selection:text-black
+
+  "
                     value={fieldApi.state.value ?? ''}
                     onBlur={fieldApi.handleBlur}
                     onChange={(e) => {
-                      const value = field.type === 'number' ? Number(e.target.value) : e.target.value
-                      fieldApi.handleChange(value)
+                      const val = e.target.value
+                      fieldApi.handleChange(
+                        field.type === 'number'
+                          ? val === ''
+                            ? ''
+                            : Number(val)
+                          : val,
+                      )
                     }}
                     type={field.type === 'number' ? 'number' : 'text'}
                   />
+
                   {/* TODO: Add validation error messages here */}
                 </div>
               )
             }}
           />
         ))}
-        
+
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
-            <Button type="submit" disabled={!canSubmit || isSubmitting}>
+            <Button
+              type="submit"
+              className={`
+    w-full py-2 px-4 rounded-md text-white font-medium 
+    bg-[#00eaff]/20 hover:bg-[#00eaff]/40 
+    border border-[#00eaff] 
+    focus:outline-none focus:ring-2 focus:ring-[#00eaff] focus:ring-offset-1
+    transition-all duration-200 cursor-pointer max-w-[100px]
+    ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}
+  `}
+              disabled={!canSubmit || isSubmitting}
+            >
               {isSubmitting ? 'Creating...' : 'Create'}
             </Button>
           )}
