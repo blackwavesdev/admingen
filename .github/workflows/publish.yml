@@ -3,14 +3,14 @@ name: Publish Packages to NPM
 on:
   push:
     tags:
-      - 'v*' # Run this workflow when you create a new tag
+      - "v*" # Run this workflow when you create a new tag
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,13 +24,25 @@ jobs:
       - name: Build all packages
         run: bun run build
 
+      - name: Get package version
+        id: get_version
+        run: |
+          echo "PACKAGE_VERSION=$(node -p "require('./packages/admingen/package.json').version")" >> $GITHUB_ENV
+
+      - name: Replace 'workspace:*' in package.json files
+        run: |
+          sed -i 's/workspace:\*/${{ env.PACKAGE_VERSION }}/g' packages/adapter-drizzle/package.json
+          sed -i 's/workspace:\*/${{ env.PACKAGE_VERSION }}/g' packages/admingen/package.json
+          sed -i 's/workspace:\*/${{ env.PACKAGE_VERSION }}/g' packages/ui/package.json
+          echo "Replaced workspace:* with ${{ env.PACKAGE_VERSION }}"
+
       # --- THIS IS THE NEW PART ---
       - name: Setup Node.js for publishing
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # Use a standard Node.js version for npm
-          registry-url: 'https://registry.npmjs.org/' # Point to the public npm registry
-          scope: '@blackwaves' # Set your scope
+          node-version: "20" # Use a standard Node.js version for npm
+          registry-url: "https://registry.npmjs.org/" # Point to the public npm registry
+          scope: "@blackwaves" # Set your scope
 
       - name: Publish @blackwaves/admingen-types
         run: cd packages/types && npm publish --access public --tag beta
@@ -41,7 +53,7 @@ jobs:
         run: cd packages/adapter-drizzle && npm publish --access public --tag beta
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          
+
       - name: Publish @blackwaves/admingen
         run: cd packages/admingen && npm publish --access public --tag beta
         env:
