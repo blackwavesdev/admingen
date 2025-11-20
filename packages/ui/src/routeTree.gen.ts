@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResourceIndexRouteImport } from './routes/$resource/index'
 import { Route as ResourceCreateRouteImport } from './routes/$resource/create'
+import { Route as ResourceIdRouteImport } from './routes/$resource/$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,33 +29,42 @@ const ResourceCreateRoute = ResourceCreateRouteImport.update({
   path: '/$resource/create',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResourceIdRoute = ResourceIdRouteImport.update({
+  id: '/$resource/$id',
+  path: '/$resource/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$resource/$id': typeof ResourceIdRoute
   '/$resource/create': typeof ResourceCreateRoute
   '/$resource': typeof ResourceIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$resource/$id': typeof ResourceIdRoute
   '/$resource/create': typeof ResourceCreateRoute
   '/$resource': typeof ResourceIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$resource/$id': typeof ResourceIdRoute
   '/$resource/create': typeof ResourceCreateRoute
   '/$resource/': typeof ResourceIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$resource/create' | '/$resource'
+  fullPaths: '/' | '/$resource/$id' | '/$resource/create' | '/$resource'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$resource/create' | '/$resource'
-  id: '__root__' | '/' | '/$resource/create' | '/$resource/'
+  to: '/' | '/$resource/$id' | '/$resource/create' | '/$resource'
+  id: '__root__' | '/' | '/$resource/$id' | '/$resource/create' | '/$resource/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ResourceIdRoute: typeof ResourceIdRoute
   ResourceCreateRoute: typeof ResourceCreateRoute
   ResourceIndexRoute: typeof ResourceIndexRoute
 }
@@ -82,11 +92,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResourceCreateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$resource/$id': {
+      id: '/$resource/$id'
+      path: '/$resource/$id'
+      fullPath: '/$resource/$id'
+      preLoaderRoute: typeof ResourceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ResourceIdRoute: ResourceIdRoute,
   ResourceCreateRoute: ResourceCreateRoute,
   ResourceIndexRoute: ResourceIndexRoute,
 }

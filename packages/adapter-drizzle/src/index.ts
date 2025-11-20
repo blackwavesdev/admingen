@@ -1,9 +1,9 @@
 import { eq } from 'drizzle-orm';
 import type { Context } from 'elysia';
-import type { 
-  AdminConfig, 
-  AdapterResult, 
-  AdminHandlers, 
+import type {
+  AdminConfig,
+  AdapterResult,
+  AdminHandlers,
   AdminSchema,
   AdminField
 } from '@blackwaves/admingen-types';
@@ -11,9 +11,9 @@ import type {
 export function createDrizzleAdapter(options: {
   config: AdminConfig;
 }): AdapterResult {
-  
+
   const schemaJson: AdminSchema = { resources: [] };
-  
+
   // We will store the logic for each resource here, 
   // so the main 'handlers' object can look it up dynamically.
   const handlerMap: Record<string, any> = {};
@@ -22,7 +22,7 @@ export function createDrizzleAdapter(options: {
   for (const resourceConfig of options.config.resources) {
     const resourceSlug = resourceConfig.slug;
     const table = resourceConfig.table;
-    
+
     // 1. Build Schema for UI
     // The UI just needs to know what fields to render
     schemaJson.resources.push({
@@ -36,14 +36,14 @@ export function createDrizzleAdapter(options: {
     // 'withRelations': Tells Drizzle which relations to JOIN (fetch)
     // 'foreignKeyMap': Tells the Create handler how to map UI names to DB columns
     const withRelations: Record<string, boolean> = {};
-    const foreignKeyMap: Record<string, string> = {}; 
+    const foreignKeyMap: Record<string, string> = {};
 
     for (const field of resourceConfig.fields) {
       if (field.type === 'relationship') {
         // Tell Drizzle to fetch this relation (e.g., "author": true)
         // This assumes the field name in config matches the relation name in Drizzle
         withRelations[field.name] = true;
-        
+
         // Map UI name -> DB Column (e.g., "author" -> "authorId")
         if (field.foreignKey) {
           foreignKeyMap[field.name] = field.foreignKey;
@@ -53,11 +53,11 @@ export function createDrizzleAdapter(options: {
 
     // 3. Build Handlers specific to this resource
     handlerMap[resourceSlug] = {
-      
+
       // FIND MANY
       findMany: async ({ db }: { db: any }) => {
         if (!db.query[resourceSlug]) {
-            throw new Error(`Drizzle query not found for '${resourceSlug}'. Did you pass the schema to drizzle()?`);
+          throw new Error(`Drizzle query not found for '${resourceSlug}'. Did you pass the schema to drizzle()?`);
         }
         // "Smart" fetch: automatically joins relations defined in config
         return db.query[resourceSlug].findMany({
@@ -68,8 +68,8 @@ export function createDrizzleAdapter(options: {
       // FIND ONE
       findOne: async ({ db, params }: { db: any, params: { id: any } }) => {
         // We assume standard auto-increment ID for now
-        const id = Number(params.id); 
-        
+        const id = Number(params.id);
+
         // Use 'eq' on the table's primary key (assumed to be 'id')
         // We can make this more robust later by inspecting the PK
         return db.query[resourceSlug].findFirst({
@@ -81,7 +81,7 @@ export function createDrizzleAdapter(options: {
       // CREATE
       create: async ({ db, body }: { db: any, body: any }) => {
         const data = { ...body };
-        
+
         // MAP RELATIONSHIPS: 
         // The UI sends { "author": 1 }
         // The Database needs { "authorId": 1 }
@@ -95,16 +95,36 @@ export function createDrizzleAdapter(options: {
         const res = await db.insert(table).values(data).returning();
         return res[0];
       },
-      
-      // UPDATE (Stub)
+
+      // UPDATE
       update: async ({ db, params, body }: { db: any, params: { id: any }, body: any }) => {
-         // Logic will be similar to create
-         return { message: "Update not implemented yet" };
+        const id = Number(params.id);
+        const data = { ...body };
+
+        // MAP RELATIONSHIPS:
+        for (const [fieldName, dbColumn] of Object.entries(foreignKeyMap)) {
+          if (data[fieldName] !== undefined) {
+            data[dbColumn] = data[fieldName];
+            delete data[fieldName];
+          }
+        }
+
+        const res = await db.update(table)
+          .set(data)
+          .where(eq(table.id, id))
+          .returning();
+
+        return res[0];
       },
 
-      // DELETE (Stub)
+      // DELETE
       delete: async ({ db, params }: { db: any, params: { id: any } }) => {
-         return { message: "Delete not implemented yet" };
+        const id = Number(params.id);
+        const res = await db.delete(table)
+          .where(eq(table.id, id))
+          .returning();
+
+        return res[0];
       }
     };
   }
@@ -126,12 +146,12 @@ export function createDrizzleAdapter(options: {
       return handlerMap[resource].create(ctx);
     },
     update: (resource) => (ctx: any) => {
-        if (!handlerMap[resource]) throw new Error(`Resource ${resource} not found`);
-        return handlerMap[resource].update(ctx);
+      if (!handlerMap[resource]) throw new Error(`Resource ${resource} not found`);
+      return handlerMap[resource].update(ctx);
     },
     delete: (resource) => (ctx: any) => {
-        if (!handlerMap[resource]) throw new Error(`Resource ${resource} not found`);
-        return handlerMap[resource].delete(ctx);
+      if (!handlerMap[resource]) throw new Error(`Resource ${resource} not found`);
+      return handlerMap[resource].delete(ctx);
     },
   };
 
