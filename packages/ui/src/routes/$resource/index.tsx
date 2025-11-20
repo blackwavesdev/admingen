@@ -96,14 +96,41 @@ function ResourceListComponent() {
   }, [schema, resourceName])
 
   const columns = React.useMemo<ColumnDef<any>[]>(() => {
-    if (!resource || !Array.isArray(resource.fields)) return []
-    return resource.fields.map((field: AdminField) => ({
-      accessorKey: field.name,
-      header: () => <span>{field.label}</span>,
-      cell: (info) => info.getValue(),
-      filterFn: 'fuzzy',
-      sortingFn: fuzzySort,
-    }))
+    if (!resource || !resource.fields) return []
+    
+    return resource.fields.map((field) => {
+      const baseColumn = {
+        accessorKey: field.name,
+        header: () => <span>{field.label}</span>,
+        filterFn: 'fuzzy' as const,
+        sortingFn: fuzzySort,
+      };
+
+      // Handle relationship fields
+      if (field.type === 'relationship') {
+        return {
+          ...baseColumn,
+          cell: (info: any) => {
+            const value = info.getValue();
+            
+            // If the API did its job, 'value' is an OBJECT { id: 1, email: '...' }
+            if (value && typeof value === 'object') {
+              // Try to find a displayable field
+              return value.email || value.name || value.title || value.username || value.id;
+            }
+            
+            // Fallback: it might still be an ID if the join failed
+            return value || '-';
+          },
+        };
+      }
+
+      // Regular field
+      return {
+        ...baseColumn,
+        cell: (info: any) => info.getValue(),
+      };
+    })
   }, [resource])
 
   // --- INFINITE LOOP FIX ---

@@ -1,25 +1,38 @@
+// packages/types/src/index.ts
+
+// 1. The Field Definition
 export interface AdminField {
   name: string;
-  type: 'text' | 'textarea' | 'number' | 'date' | 'boolean' | 'select' | 'relation';
-  isId?: boolean;
   label?: string;
-  // For relationship fields
-  relationType?: 'oneToOne' | 'oneToMany' | 'manyToOne' | 'manyToMany';
-  relatedResource?: string; // The name of the related resource
-  foreignKey?: string; // The foreign key column name (for manyToOne)
+  type: 'text' | 'textarea' | 'number' | 'boolean' | 'date' | 'relationship';
+  isId?: boolean;
+  // For relationships
+  relationTo?: string; // e.g. "users"
+  foreignKey?: string; // e.g. "authorId"
 }
 
-export interface AdminResource {
-  name: string; // The API slug (e.g., "posts")
-  label: string; // The human-friendly name (e.g., "Posts")
+// 2. The Resource Definition
+export interface AdminResourceConfig {
+  slug: string; // e.g. "posts"
+  label?: string;
+  table: any; // The Drizzle table object
   fields: AdminField[];
 }
 
-export interface AdminSchema {
-  resources: AdminResource[];
+// 3. The Master Config
+export interface AdminConfig {
+  resources: AdminResourceConfig[];
 }
 
-// Define the interface for the generated API handlers
+// ... (Keep your existing AdminSchema, AdminHandlers, AdapterResult interfaces)
+export interface AdminSchema {
+  resources: {
+    name: string;
+    label: string;
+    fields: AdminField[];
+  }[];
+}
+
 export interface AdminHandlers {
     findMany: (resource: string) => any;
     findOne: (resource: string) => any;
