@@ -3,7 +3,7 @@ name: Publish @next Tag to NPM
 on:
   push:
     branches:
-      - 'main'
+      - "main"
   workflow_dispatch:
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,13 +28,22 @@ jobs:
       # --- NEW FIX STARTS HERE ---
 
       - name: Get package version
-        # Reads the version from admingen's package.json and saves it to an env variable
+        # Reads the version from admingen's package.json and appends the run number
         id: get_version
         run: |
-          echo "PACKAGE_VERSION=$(node -p "require('./packages/admingen/package.json').version")" >> $GITHUB_ENV
+          BASE_VERSION=$(node -p "require('./packages/admingen/package.json').version")
+          echo "PACKAGE_VERSION=${BASE_VERSION}-next.${{ github.run_number }}" >> $GITHUB_ENV
+
+      - name: Update package versions
+        # Updates the version in package.json files to the dynamic version
+        run: |
+          npm pkg set version=${{ env.PACKAGE_VERSION }} --prefix packages/types
+          npm pkg set version=${{ env.PACKAGE_VERSION }} --prefix packages/adapter-drizzle
+          npm pkg set version=${{ env.PACKAGE_VERSION }} --prefix packages/admingen
+          npm pkg set version=${{ env.PACKAGE_VERSION }} --prefix packages/ui
 
       - name: Replace 'workspace:*' in package.json files
-        # Finds and replaces 'workspace:*' with the real version (e.g., "0.0.1-beta.32")
+        # Finds and replaces 'workspace:*' with the real version
         run: |
           sed -i 's/workspace:\*/${{ env.PACKAGE_VERSION }}/g' packages/adapter-drizzle/package.json
           sed -i 's/workspace:\*/${{ env.PACKAGE_VERSION }}/g' packages/admingen/package.json
@@ -46,9 +55,9 @@ jobs:
       - name: Setup Node.js for publishing
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org/'
-          scope: '@blackwaves'
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org/"
+          scope: "@blackwaves"
 
       - name: Publish @blackwaves/admingen-types@next
         run: cd packages/types && npm publish --access public --tag next
@@ -59,7 +68,7 @@ jobs:
         run: cd packages/adapter-drizzle && npm publish --access public --tag next
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          
+
       - name: Publish @blackwaves/admingen@next
         run: cd packages/admingen && npm publish --access public --tag next
         env:
