@@ -9,37 +9,36 @@ An instant, "headless" admin panel for modern JavaScript backends, built on **El
 
 This framework introspects your Drizzle schema, auto-generates a secure API, and provides a dynamic, pre-built React UI to manage your data.
 
-
 > **Note:** A 15-second GIF showing the final, working admin panel is the perfect demo to add here.
 
 ---
 
 ## ✨ Core Features
 
-* **Zero-Config API:** Automatically generates a full REST API from your existing Drizzle schema.
-* **Dynamic UI:** The React frontend (built with TanStack) dynamically renders tables, filters, and sorting based on your API schema.
-* **Plug-and-Play:** Add it to your existing Elysia server in just a few lines of code.
-* **Modern Stack:** Built on the fastest, most modern tools: Bun, Elysia, and Drizzle.
-* **Open Source:** MIT-licensed, built in public by **[@blackwaves](https://github.com/blackwavesdev)**.
+- **Zero-Config API:** Automatically generates a full REST API from your existing Drizzle schema.
+- **Dynamic UI:** The React frontend (built with TanStack) dynamically renders tables, filters, and sorting based on your API schema.
+- **Plug-and-Play:** Add it to your existing Elysia server in just a few lines of code.
+- **Modern Stack:** Built on the fastest, most modern tools: Bun, Elysia, and Drizzle.
+- **Open Source:** MIT-licensed, built in public by **[@blackwaves](https://github.com/blackwavesdev)**.
 
 ---
 
 ## ⚡ Tech Stack
 
-* **Runtime:** [Bun](https://bun.sh/)
-* **Backend:** [ElysiaJS](https://elysiajs.com/)
-* **ORM:** [Drizzle ORM](https://orm.drizzle.team/)
-* **Frontend:** [Vite](https://vitejs.dev/) + [React](https://react.dev/)
-* **UI/State:** [TanStack](https://tanstack.com/) (Router, Query, Table, Form)
-* **Styling:** [Shadcn/UI](https://ui.shadcn.com/)
+- **Runtime:** [Bun](https://bun.sh/)
+- **Backend:** [ElysiaJS](https://elysiajs.com/)
+- **ORM:** [Drizzle ORM](https://orm.drizzle.team/)
+- **Frontend:** [Vite](https://vitejs.dev/) + [React](https://react.dev/)
+- **UI/State:** [TanStack](https://tanstack.com/) (Router, Query, Table, Form)
+- **Styling:** [Shadcn/UI](https://ui.shadcn.com/)
 
 ---
 
 ## 🚦 Status: Beta
 
-This project is currently in **beta**. The core read-only functionality (List, Get, Filter, Sort) is complete, tested, and published to npm.
+This project is currently in **beta**. The core functionality including Create, Read, Update, and Delete (CRUD) is complete, tested, and published to npm.
 
-We are actively working on Create, Update, and Delete operations.
+We are actively working on Authentication and advanced features.
 
 ---
 
@@ -51,7 +50,7 @@ Get your admin panel running in 3 minutes.
 
 In your existing Elysia + Drizzle project, install the core framework, the Drizzle adapter, and all required peer dependencies.
 
-```bash
+````bash
 # Install the core framework and the Drizzle adapter
 bun add @blackwaves/admingen@beta @blackwaves/admingen-adapter-drizzle@beta
 
@@ -90,7 +89,7 @@ const app = new Elysia()
   .listen(3000);
 
 console.log('🦊 Admin panel running at http://localhost:3000/admin');
-```
+````
 
 ### 3. Run It!
 
@@ -122,9 +121,9 @@ We are building this in public—follow our progress!
 - [x] **UI:** Dynamic Table View (List/Get)
 - [x] **UI:** Filtering & Sorting
 - [x] **Build:** Automated publishing pipeline to npm
-- [ ] **API/UI:** Create Functionality (In Progress)
-- [ ] **API/UI:** Update Functionality
-- [ ] **API/UI:** Delete Functionality
+- [x] **API/UI:** Create Functionality
+- [x] **API/UI:** Update Functionality
+- [x] **API/UI:** Delete Functionality
 - [ ] **Auth:** Simple beforeHandle authentication hooks
 
 ---
