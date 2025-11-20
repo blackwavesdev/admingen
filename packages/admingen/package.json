@@ -45,5 +45,9 @@
     "bun-types": "latest",
     "typescript": "^5.3.0",
     "elysia": "latest"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }

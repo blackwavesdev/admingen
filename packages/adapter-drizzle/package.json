@@ -42,5 +42,9 @@
     "bun-types": "latest",
     "elysia": "latest",
     "drizzle-orm": "latest"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
